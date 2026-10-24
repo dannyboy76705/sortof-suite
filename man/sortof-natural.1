@@ -1,0 +1,39 @@
+.TH SORTOF-NATURAL 1 "October 2026" "sortof-suite" "User Commands"
+.SH NAME
+sortof\-natural \- list files in natural order
+.SH SYNOPSIS
+.B sortof\-natural
+[options] SOURCE...
+.SH DESCRIPTION
+Writes a list of files, one path per line, in natural order: path by path, one folder level at a time, with runs of digits compared by value (f2 before f10). Every folder's files stay together. Nothing is hashed or read, and the order does not depend on the locale or on the order the disk lists files in, so the same files give the same list on every machine.
+.PP
+A source is a directory (scanned recursively), a regular file (listed as it is), or \- for a list of paths on standard input, used once. A path that comes up more than once is listed once.
+.SH OPTIONS
+.TP
+.B \-p PATH
+Pin PATH: it comes first in the output, exactly as given, and is never sorted, hashed or read. May be repeated. A file named cdcstore.idx is pinned by itself.
+.TP
+.B \-f PATH
+Write the list to PATH instead of standard output.
+.TP
+.B \-q
+Quiet.
+.TP
+.B \-h
+Print help.
+.SH EXAMPLES
+.nf
+.RS
+sortof\-natural /path/to/source > list.txt
+zfrag pack \-T list.txt \-o set.tar.zfrag
+.RE
+.fi
+.sp
+.SH AUTHOR
+Daniel Lee Witzel. MIT license (see the LICENSE file shipped with the source).
+.SH SEE ALSO
+.BR sortof\-extension (1),
+.BR sortof\-minhash (1),
+.BR sortof\-cdcsort (1),
+.BR sortof\-palscore (1),
+.BR zfrag (1)

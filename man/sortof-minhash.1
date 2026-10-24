@@ -1,0 +1,53 @@
+.TH SORTOF-MINHASH 1 "October 2026" "sortof-suite" "User Commands"
+.SH NAME
+sortof\-minhash \- list files in similarity order (MinHash)
+.SH SYNOPSIS
+.B sortof\-minhash
+[options] SOURCE...
+.SH DESCRIPTION
+Computes a MinHash digest for every file (128 functions over 8\-byte shingles), orders the files greedily so that files sharing byte sequences end up next to each other, and refines the order with 2\-opt sweeps. The result is a list to pipe into an archiver. The greedy pass starts at the first file, so the order depends on the input order: give it a sorted list, for example sortof\-natural dir | sortof\-minhash \-.
+.PP
+A source is a directory (scanned recursively), a regular file (listed as it is), or \- for a list of paths on standard input, used once. A path that comes up more than once is listed once.
+.SH OPTIONS
+.TP
+.B \-b N
+Files per batch (default: one batch, which is the most accurate).
+.TP
+.B \-o N
+Most 2\-opt refinement sweeps (default 50; 0 turns them off).
+.TP
+.B \-m
+Matroska\-aware: for real .mkv and .webm files (found by their magic bytes) hash only the Cluster payload, skipping the header, SeekHead, Info, Tracks and Cues. Other files are hashed normally.
+.TP
+.B \-t N
+Threads (default: the number of CPUs).
+.TP
+.B \-v
+Print a memory and behaviour estimate before running.
+.TP
+.B \-p PATH
+Pin PATH: it comes first in the output, exactly as given, and is never sorted, hashed or read. May be repeated. A file named cdcstore.idx is pinned by itself.
+.TP
+.B \-f PATH
+Write the list to PATH instead of standard output.
+.TP
+.B \-q
+Quiet.
+.TP
+.B \-h
+Print help.
+.SH EXAMPLES
+.nf
+.RS
+sortof\-natural dir | sortof\-minhash \- | tar \-T\- \-\-no\-recursion \-cf \- | zstd \-9 > out.tar.zst
+.RE
+.fi
+.sp
+.SH AUTHOR
+Daniel Lee Witzel. MIT license (see the LICENSE file shipped with the source).
+.SH SEE ALSO
+.BR sortof\-natural (1),
+.BR sortof\-extension (1),
+.BR sortof\-cdcsort (1),
+.BR sortof\-palscore (1),
+.BR zfrag (1)

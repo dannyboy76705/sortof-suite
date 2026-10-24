@@ -1,0 +1,57 @@
+.TH SORTOF-CDCSORT 1 "October 2026" "sortof-suite" "User Commands"
+.SH NAME
+sortof\-cdcsort \- chain identical and near\-identical files behind their first instance
+.SH SYNOPSIS
+.B sortof\-cdcsort
+[options] SOURCE...
+.SH DESCRIPTION
+Keeps the list in the order it is given, except that files whose content matches an earlier file are moved right behind it, so a compressor with a small window finds the second copy next to the first. Only the order changes, never the data.
+.PP
+Identical files (same length and 64\-bit FNV hash) come directly behind the first copy, in the order they appeared. Only files that share a size with another file are read.
+.PP
+Unless \-s 0, files that are not exact duplicates get a MinHash sketch, and a file whose sketch is at least PCT percent like an earlier file's is moved behind the most similar such file. Candidates come from banding the sketch, with no all\-pairs comparison, so it scales to millions of files. Every file is read once and a sketch needs 512 bytes of memory.
+.PP
+This is the sorter for cdcstore chunk lists: cdcstore\-list \-k REPO | sortof\-cdcsort \- > list.txt.
+.PP
+A source is a directory (scanned recursively), a regular file (listed as it is), or \- for a list of paths on standard input, used once. A path that comes up more than once is listed once.
+.SH OPTIONS
+.TP
+.B \-s PCT
+Chain near matches that are at least PCT percent alike (default 50). \-s 0 chains exact duplicates only.
+.TP
+.B \-m N
+Near\-match candidates tried per band (default 16).
+.TP
+.B \-e N
+Files smaller than N bytes get no sketch (default 512).
+.TP
+.B \-t N
+Threads for reading (default: the number of CPUs).
+.TP
+.B \-p PATH
+Pin PATH: it comes first in the output, exactly as given, and is never sorted, hashed or read. May be repeated. A file named cdcstore.idx is pinned by itself.
+.TP
+.B \-f PATH
+Write the list to PATH instead of standard output.
+.TP
+.B \-q
+Quiet.
+.TP
+.B \-h
+Print help.
+.SH EXAMPLES
+.nf
+.RS
+cdcstore\-list \-k REPO | sortof\-cdcsort \- > list.txt
+.RE
+.fi
+.sp
+.SH AUTHOR
+Daniel Lee Witzel. MIT license (see the LICENSE file shipped with the source).
+.SH SEE ALSO
+.BR sortof\-natural (1),
+.BR sortof\-extension (1),
+.BR sortof\-minhash (1),
+.BR sortof\-palscore (1),
+.BR cdcstore\-list (1),
+.BR zfrag (1)

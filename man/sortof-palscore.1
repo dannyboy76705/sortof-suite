@@ -1,0 +1,72 @@
+.TH SORTOF-PALSCORE 1 "October 2026" "sortof-suite" "User Commands"
+.SH NAME
+sortof\-palscore \- list JPEG video frames in scene order
+.SH SYNOPSIS
+.B sortof\-palscore
+[options] LIST|\-|DIR...
+.SH DESCRIPTION
+Finds scenes in a list of JPEG pictures and writes the list in scene order. Each JPEG is decoded at one eighth scale and reduced to a small signature: coarse histograms of Y, Cb and Cr plus a grid of mean luma. Noise barely changes a signature, so scenes show up although their JPEG rows never match byte for byte.
+.PP
+A file starts a new scene when its distance from the last few files of the current scene is above the cut (\-c). In the output scenes stay whole and in natural order inside; after each scene the most similar unvisited scene follows if it is within \-j percent, otherwise, or if the natural next scene is within \-b percent of that best one, the natural next scene follows. Byte\-identical files are chained right behind their first instance (\-D, on by default).
+.PP
+Given folders, it makes the natural list itself, as sortof\-natural would. The signatures are kept in a file and reused while the list is the same, so tuning takes seconds. A set's specs.txt is added to the end of the list by itself. Files that are not JPEGs get no signature and are placed at the end.
+.SH OPTIONS
+.TP
+.B \-o FILE
+Write the list in scene order.
+.TP
+.B \-v FILE
+Write one line per scene to FILE.
+.TP
+.B \-w FILE
+Signature file (made if missing or if the list changed). Default: LIST.bin, or DIR.bin beside a folder.
+.TP
+.B \-F
+Force the signatures to be made again.
+.TP
+.B \-c PCT
+Scene cut: the distance above which a file starts a scene (default 10).
+.TP
+.B \-k K
+Files looked back at for the cut (default 4).
+.TP
+.B \-j PCT
+Follow the most similar unvisited scene only if it is within PCT (default 5).
+.TP
+.B \-b PCT
+Prefer the natural next scene if it is within PCT of the best one (default 1).
+.TP
+.B \-g N
+Most scenes used for the look\-alike search and the order (default 60000).
+.TP
+.B \-D
+Chain byte\-identical files behind their first instance (the default, with \-o).
+.TP
+.B \-N
+No duplicate chaining.
+.TP
+.B \-t N
+Threads.
+.TP
+.B \-p PATH
+Pin PATH: it comes first in the \-o list and is never read. May be repeated.
+.TP
+.B \-q
+Quiet.
+.SH EXAMPLES
+.nf
+.RS
+sortof\-palscore SET/ep1 \-o list.txt
+zfrag pack \-T list.txt \-o ep1.tar.zfrag
+.RE
+.fi
+.sp
+.SH AUTHOR
+Daniel Lee Witzel. MIT license (see the LICENSE file shipped with the source).
+.SH SEE ALSO
+.BR sortof\-natural (1),
+.BR sortof\-extension (1),
+.BR sortof\-minhash (1),
+.BR sortof\-cdcsort (1),
+.BR mjpegstore (1),
+.BR zfrag (1)

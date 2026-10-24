@@ -1,0 +1,30 @@
+.TH SORTOF-EXTENSION 1 "October 2026" "sortof-suite" "User Commands"
+.SH NAME
+sortof\-extension \- list files in natural order by extension
+.SH SYNOPSIS
+.B sortof\-extension
+[options] SOURCE...
+.SH DESCRIPTION
+Writes a list of files, one path per line, sorted by extension (case ignored, files without an extension first), then by file name, then by folder, so that same\-named files in different folders sit together. This suits a collection of games or documents: all the .exe files together, then all the .dat files, and a runtime file that many games carry ends up in one place. Nothing is hashed or read.
+.PP
+A source is a directory (scanned recursively), a regular file (listed as it is), or \- for a list of paths on standard input, used once. A path that comes up more than once is listed once.
+.SH OPTIONS
+.TP
+.B \-p PATH
+Pin PATH: it comes first in the output, exactly as given, and is never sorted, hashed or read. May be repeated. A file named cdcstore.idx is pinned by itself.
+.TP
+.B \-f PATH
+Write the list to PATH instead of standard output.
+.TP
+.B \-q
+Quiet.
+.TP
+.B \-h
+Print help.
+.SH AUTHOR
+Daniel Lee Witzel. MIT license (see the LICENSE file shipped with the source).
+.SH SEE ALSO
+.BR sortof\-natural (1),
+.BR sortof\-minhash (1),
+.BR sortof\-cdcsort (1),
+.BR sortof\-palscore (1)
